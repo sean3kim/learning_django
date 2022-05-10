@@ -6,7 +6,8 @@ const initialState = {
     email: "",
     firstName: "",
     lastName: "",
-    isLoggedIn: false
+    isStaff: false,
+    isLoggedIn: false,
 }
 
 export const userSlice = createSlice({
@@ -21,6 +22,7 @@ export const userSlice = createSlice({
                 email,
                 firstName: action.payload.first_name,
                 lastName: action.payload.last_name,
+                isStaff: action.payload.is_staff,
                 isLoggedIn: true
             }
             return state
@@ -28,11 +30,13 @@ export const userSlice = createSlice({
         builder
             .addCase(getLoginStatus.fulfilled, (state, action) => {
                 const {username, email} = action.payload
+                console.log('login status payload', action.payload)
                 state = {
                     username,
                     email,
                     firstName: action.payload.first_name,
                     lastName: action.payload.last_name,
+                    isStaff: action.payload.is_staff,
                     isLoggedIn: true
                 }
                 return state
@@ -56,6 +60,7 @@ export const userSlice = createSlice({
                     email,
                     firstName: action.payload.first_name,
                     lastName: action.payload.last_name,
+                    isStaff: action.payload.is_staff,
                     isLoggedIn: true
                 }
                 return state;

@@ -2,10 +2,25 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from .models import Apparel, Climbing, Tag
-from .serializers import ApparelSerializer, ClimbingSerializer, TagSerializer
+from .models import Apparel, Climbing, Tag, Product
+from .serializers import ApparelSerializer, ClimbingSerializer, TagSerializer, ProductSerializer
+from .permissions import IsAdminOrReadOnly
 
 # Create your views here.
+
+'''
+Product Views
+'''
+class ProductListView(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+class ProductDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    lookup_field = 'pk'
 
 '''
 Apparel views
@@ -13,21 +28,13 @@ Apparel views
 class ApparelListCreateView(generics.ListCreateAPIView):
     queryset = Apparel.objects.all()
     serializer_class = ApparelSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
 
 class ApparelDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Apparel.objects.all()
     serializer_class = ApparelSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
     lookup_field = 'pk'
-
-    # .get() doesn't work because it returns an object and not a queryset
-    # .filter() isn't any better because it is really .all().filter()
-    # def get_queryset(self):
-    #     pk = self.kwargs['pk']
-    #     print(pk)
-    #     return Apparel.objects.filter(pk=pk)
-
 
     ''' 
     something weird going on here
@@ -56,12 +63,12 @@ Climbing views
 class ClimbingListCreateView(generics.ListCreateAPIView):
     queryset = Climbing.objects.all()
     serializer_class = ClimbingSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
 
 class ClimbingDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Climbing.objects.all()
     serializer_class = ClimbingSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
     lookup_field = 'pk'
 
 
@@ -71,11 +78,11 @@ Tag views
 class TagListCreateView(generics.ListCreateAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
 
 # is this view needed if the tags are preset? might just need a ListView and DetailView
 class TagDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
     lookup_field = 'pk'

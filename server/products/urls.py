@@ -10,4 +10,6 @@ urlpatterns = [
     path('climbing/<str:pk>/', views.ClimbingDetailUpdateDeleteView.as_view()),
     path('climbing/', views.ClimbingListCreateView.as_view()),
     path('tags/', views.TagListCreateView.as_view()),
+    path('<str:pk>/', views.ProductDetailUpdateDeleteView.as_view()),
+    path('', views.ProductListView.as_view()),
 ]

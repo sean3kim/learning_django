@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import { getActiveOrder, addItem, removeItem } from './orderThunks'
 import { loginUser, getLoginStatus } from '../user/userThunks';
 
 const initialState = {
-    byId: {},
-    allIds: [],
-    active: {},
+    order: null,
+    items: []
 }
 
 /**
@@ -26,29 +26,43 @@ export const orderSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            .addCase(getActiveOrder.fulfilled, (state, action) => {
+                const { items, ...rest } = action.payload;
+                if (items && rest) {
+                    state.items = items;
+                    state.order = rest;
+                }
+                return state;
+            })
+        builder
+            .addCase(addItem.fulfilled, (state, action) => {
+                state.items = [...state.items, action.payload];
+                return state;
+            })
+        builder
+            .addCase(removeItem.fulfilled, (state, action) => {
+                state.items = state.items.filter((item) => item.id !== action.payload)
+                return state
+            })
+        builder
             .addCase(loginUser.fulfilled, (state, action) => {
                 // when a user logs in the response from server contains user details as well as list of orders, and within orders order items
                 // *** maybe can change this to just get the active order if any
                 //      if the user wants to look at previous orders, can grab them on that page load
-                const orders = action.payload.order;
-                console.log("orders slice orders", orders)
-                let newState = {};
-                orders.forEach((order) => {
-                    newState[order.id] = order;
-                })
-                state.byId = newState;
-                state.allIds = orders.map((order) => order.id);
+                const { items, ...rest } = action.payload.order;
+                if (items && rest) {
+                    state.items = items;
+                    state.order = rest;
+                }
                 return state;
             })
         builder
             .addCase(getLoginStatus.fulfilled, (state, action) => {
-                const orders = action.payload.order;
-                let newState = {};
-                orders.forEach((order) => {
-                    newState[order.id] = order;
-                })
-                state.byId = newState;
-                state.allIds = orders.map((order) => order.id);
+                const { items, ...rest } = action.payload.order;
+                if (items && rest) {
+                    state.items = items;
+                    state.order = rest;
+                }
                 return state;
             })
     }

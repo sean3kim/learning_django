@@ -1,5 +1,4 @@
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate
 from rest_framework import generics
 from rest_framework.response import Response
 from django.middleware import csrf
@@ -8,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated
 from .models import MyUser
 from .serializers import UserSerializer
 
-# Create your views here.
 from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken

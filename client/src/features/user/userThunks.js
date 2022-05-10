@@ -28,7 +28,6 @@ export const loginUser = createAsyncThunk(
             })
 
         const res = await ax.post(`${url}/users/login/`, loginCred, {withCredentials: true, headers: {'X-CSRFToken': csrftoken}})
-        console.log('user logged in data', res.data)
         return res.data
     }
 )
@@ -59,7 +58,6 @@ export const registerUser = createAsyncThunk(
         )
 
         const res = await ax.post(`${url}/users/register/`, loginCred, config);
-        console.log("register user", res.data);
         return res.data;
     }
 )
@@ -91,7 +89,6 @@ export const getLoginStatus = createAsyncThunk(
 
         try {
             const res = await ax.get(`${url}/users/status/`, {withCredentials: true})
-            console.log("getloginstatus data", res.data)
             return res.data
         } catch (error) {
             // rejectWithValue will send to rejected extrareducer in slice with the value defined in rejectValue

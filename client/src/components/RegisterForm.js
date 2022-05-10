@@ -1,9 +1,10 @@
 import { React, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { registerUser } from '../features/user/userThunks';
+import { StyledPaperForm } from '../styles/PaperStyles';
 
 const RegisterForm = () => {
     const [username, setUsername] = useState("");
@@ -19,57 +20,66 @@ const RegisterForm = () => {
 
         const data = {username, email, password, confirm};
         dispatch(registerUser(data));
-        navigate('/products/apparel');
+        navigate('/products');
     }
 
     return (
-        <div>
+        <StyledPaperForm>
+            <Typography align='center' variant='h4'>register</Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
+                    sx={{marginY: '1rem'}}
                     variant='outlined'
                     label='username'
                     name='username'
                     id='username'
                     required
+                    fullWidth
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
                 <TextField
+                    sx={{marginY: '1rem'}}
                     variant='outlined'
                     type='email'
                     label='email'
                     name='email'
                     id='email'
                     required
+                    fullWidth
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
+                    sx={{marginY: '1rem'}}
                     variant='outlined'
                     type='password'
                     label='password'
                     name='password'
                     id='password'
                     required
+                    fullWidth
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <TextField
+                    sx={{marginY: '1rem'}}
                     variant='outlined'
                     type='password'
                     label='confirm'
                     name='confirm'
                     id='confirm'
                     required
+                    fullWidth
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
                 />
 
                 <div>
-                    <Button type='submit' variant='outlined'>register</Button>
+                    <Button type='submit' variant='outlined' fullWidth>register</Button>
                 </div>
             </form>
-        </div>
+        </StyledPaperForm>
     )
 }
 

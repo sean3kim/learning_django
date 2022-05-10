@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Apparel, Climbing, Tag
+from .models import Apparel, Climbing, Tag, Product
 
 class TagSerializer(serializers.ModelSerializer):
     apparel_related = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name')
@@ -26,9 +26,19 @@ class ApparelSerializer(serializers.ModelSerializer):
 
 
 class ClimbingSerializer(serializers.ModelSerializer):
-    tag = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), write_only=True)
+    tag = serializers.SlugRelatedField(queryset=Tag.objects.all(), write_only=True, slug_field='name')
     tag_name = serializers.ReadOnlyField(source='tag.name')
 
     class Meta:
         model = Climbing
         fields = ['id', 'name', 'price', 'description', 'quantity', 'tag', 'tag_name']
+
+class ProductSerializer(serializers.ModelSerializer):
+    tag = serializers.SlugRelatedField(queryset=Tag.objects.all(), write_only=True, slug_field='name')
+    tag_name = serializers.ReadOnlyField(source='tag.name')
+    size = serializers.CharField(source='apparel.size', max_length=100, read_only=True, required=False)
+    gender = serializers.CharField(source='apparel.gender', max_length=100, read_only=True, required=False)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'price', 'description', 'quantity', 'tag', 'tag_name', 'size', 'gender']

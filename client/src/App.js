@@ -1,17 +1,21 @@
 import Header from './components/Header';
 import ListProducts from './components/ListProducts';
-import AddApparelPage from './pages/AddApparelPage';
-import EditApparelPage from './pages/EditApparelPage';
+import AddProductPage from './pages/AddProductPage';
+import EditProductPage from './pages/EditProductPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProductPage from './pages/ProductPage';
 import HomePage from './pages/HomePage';
+import GetAdminAuth from './authentication/GetAdminAuth';
+import NoPermissions from './pages/NoPermissions';
 import CartPage from './pages/CartPage';
-import TestOrderPage from './pages/TestOrderPage';
+import Layout from './components/Layout';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getLoginStatus } from './features/user/userThunks';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from './styles/Styles';
 
 function App() {
 
@@ -22,22 +26,30 @@ function App() {
   }, [])
 
   return (
-    <Router>
-      <div className="App">
-        <Header/>
-        <Routes>
-          <Route path='/' exact element={<HomePage />} />
-          <Route path='/products/apparel' element={<ListProducts />} />
-          <Route path='/products/apparel/new' element={<AddApparelPage />} />
-          <Route path='/products/apparel/edit/:id' element={<EditApparelPage />} />
-          <Route path='/products/apparel/:id' element={<ProductPage />} />
-          <Route path='/users/login' element={<LoginPage />} />
-          <Route path='/users/register' element={<RegisterPage />} />
-          <Route path='/orders' element={<TestOrderPage />} />
-          <Route path='/cart' element={<CartPage />} />
-        </Routes>
-      </div>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <div className="App">
+          <Layout>
+            <Header/>
+            <Routes>
+              <Route path='/' exact element={<HomePage />} />
+              <Route path='/products' element={<ListProducts />} />
+              <Route path='/products/new' element={
+                <GetAdminAuth redirectTo='/noauth'>
+                  <AddProductPage />
+                </GetAdminAuth>
+              } />
+              <Route path='/products/edit/:id' element={<EditProductPage />} />
+              <Route path='/products/:id' element={<ProductPage />} />
+              <Route path='/users/login' element={<LoginPage />} />
+              <Route path='/users/register' element={<RegisterPage />} />
+              <Route path='/orders' element={<CartPage />} />
+              <Route path='/noauth' element={<NoPermissions />} />
+            </Routes>
+          </Layout>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

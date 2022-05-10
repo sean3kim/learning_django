@@ -5,7 +5,7 @@ const HomePage = () => {
     return (
         <div>
             C O N T A C T
-            <Link to={'/products/apparel'}>to apparels page</Link>
+            <Link to={'/products'}>to products page</Link>
         </div>
     )
 }

@@ -1,35 +1,46 @@
 import { React, useEffect } from 'react';
-import {Link} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllApparel, deleteApparel } from '../features/apparel/apparelThunks';
+import { Link } from 'react-router-dom';
+import { getAllProduct, deleteProduct } from '../features/product/productThunks';
 
-import {Button } from '@mui/material';
+import { Button, Typography, Container, Grid, Card } from '@mui/material';
+import { StyledLink } from '../styles/LinkStyles';
 
 const ListProducts = () => {
 
     const dispatch = useDispatch();
 
-    const products = useSelector((state) => Object.values(state.apparel.apparelById))
+    const products = useSelector((state) => Object.values(state.product.byId));
+    const isAdmin = useSelector((state) => state.user.isStaff);
 
     useEffect(() => {
-        dispatch(getAllApparel());
+        dispatch(getAllProduct());
     }, [])
 
     return (
-        <div>
-            {/* the <Link> will build relative to current URL ?? */}
-            {products && products.map((p, index) => 
-                <div key={index}>
-                    <Link to={`${p.id}`}>{p.name}</Link>
-                    <br></br>
-                    <Link to={`edit/${p.id}`} state={{p}}>edit</Link>
-                    <Button onClick={() => dispatch(deleteApparel(p.id))}>delete</Button>
-                </div>
-            )}
+        <Container>
+            <Grid container rowSpacing={2} columnSpacing={2}>
+                {/* the <Link> will build relative to current URL ?? */}
+                {products && products.map((p, index) => 
+                    <Grid item xs={4} key={index}>
+                        <Card variant='outlined'>
+                            <Link to={`${p.id}`}>{p.name}</Link>
+                            <Typography>{p.price}</Typography>
+                            <Typography>{p.description}</Typography>
+                            {isAdmin && 
+                                <div>
+                                    <Link to={`edit/${p.id}`} state={{p}}>edit</Link>
+                                    <Button onClick={() => dispatch(deleteProduct(p.id))}>delete</Button>
+                                </div>
+                            }
+                        </Card>
+                    </Grid>
+                )}
+            </Grid> 
             <div>
-                <Link to='/products/apparel/new'>add</Link>
+                <StyledLink to='/products/new'>add</StyledLink>
             </div>
-        </div>
+        </Container>
     )
 }
 

@@ -2,6 +2,11 @@ from django.db import models
 
 # Create your models here.
 
+'''
+have changed from abstract base class to multitable inheritance
+can query product model and get apparel/climbing objects/querysets
+should i add a type field to determine if the product is apparel/climbing???
+'''
 class Product(models.Model):
     name = models.CharField(max_length=200)
     price = models.FloatField(default=0.00)
@@ -16,8 +21,8 @@ class Product(models.Model):
     tag = models.ForeignKey('Tag', related_name="%(class)s_related", related_query_name="%(class)ss", on_delete=models.CASCADE)
     # reviews = models.OneToMany() // review can be only for one product and products can have many reviews
 
-    class Meta:
-        abstract = True
+    # class Meta:
+    #     abstract = True
 
 '''
 subclass of Product for apparel items
@@ -67,8 +72,8 @@ class Tag(models.Model):
     shirts = 'shirts'
     pants = 'pants'
     sweaters = 'sweaters'
-    chalk_bags = 'chalk_bags'
-    chalk_buckets = 'chalk_buckets'
+    chalk_bags = 'chalk bags'
+    chalk_buckets = 'chalk buckets'
     brushes = 'brushes'
     bottles = 'bottles'
     NAMES = [
