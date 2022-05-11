@@ -1,9 +1,11 @@
+from this import d
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from .models import Apparel, Climbing, Tag, Product
-from .serializers import ApparelSerializer, ClimbingSerializer, TagSerializer, ProductSerializer
+from .serializers import ApparelSerializer, ClimbingSerializer, ImageSerializer, TagSerializer, ProductSerializer
 from .permissions import IsAdminOrReadOnly
 
 # Create your views here.
@@ -29,6 +31,41 @@ class ApparelListCreateView(generics.ListCreateAPIView):
     queryset = Apparel.objects.all()
     serializer_class = ApparelSerializer
     permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def create(self, request, *args, **kwargs):
+        print('request data', request.data)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        prod = self.perform_create(serializer)
+
+        image_array_data = []
+        for key,value in request.data.items():
+            if key.startswith('image'):
+                image_array_data.append({
+                    'name': prod.name,
+                    'product': prod.id,
+                    'image': value,
+                    'default': True
+                })
+
+        # image_data = {
+        #     'name': prod.name,
+        #     'product': prod.id,
+        #     'image': request.data['image'],
+        #     'default': True
+        # }
+        print('image_data', image_array_data)
+        imageSerializer = ImageSerializer(data=image_array_data, many=True)
+        print('1')
+        imageSerializer.is_valid(raise_exception=True)
+        print('2')
+        self.perform_create(imageSerializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, headers=headers)
+        
+    def perform_create(self, serializer):
+        return serializer.save()
 
 class ApparelDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Apparel.objects.all()
@@ -70,6 +107,13 @@ class ClimbingDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ClimbingSerializer
     permission_classes = [IsAdminOrReadOnly]
     lookup_field = 'pk'
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        deleted_item = serializer.data
+        self.perform_destroy(instance)
+        return Response(deleted_item)
 
 
 '''

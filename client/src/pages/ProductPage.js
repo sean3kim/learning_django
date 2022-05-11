@@ -2,7 +2,7 @@ import { React, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getOneProduct, deleteProduct } from '../features/product/productThunks';
-import { Container, Paper, Button } from '@mui/material';
+import { Container, Paper, Button, Card, CardMedia, CardContent, Typography } from '@mui/material';
 
 import { getActiveOrder, addItem } from '../features/order/orderThunks';
 
@@ -41,7 +41,25 @@ const ProductPage = () => {
     return (
         <Container>
             <Paper>
+                <Card sx={{ maxWidth: 345 }}>
+                    <CardMedia
+                        component="img"
+                        height="140"
+                        image={product.images[0].image}
+                        alt="green iguana"
+                    />
+                    {/* <CardContent>
+                        <Typography gutterBottom variant="h5" component="div">
+                        Lizard
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                        Lizards are a widespread group of squamate reptiles, with over 6,000
+                        species, ranging across all continents except Antarctica
+                        </Typography>
+                    </CardContent> */}
+                </Card>
                 {product && product.name}
+                {console.log('product in product page', product)}
 
                 <div>
                     <Button onClick={addToCart}>add to cart</Button>

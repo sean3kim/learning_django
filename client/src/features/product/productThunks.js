@@ -39,6 +39,7 @@ export const addProduct = createAsyncThunk(
         const config = {
             withCredentials: true,
             headers: {
+                // 'Content-Type': 'multipart/form-data',
                 'X-CSRFToken': csrftoken
             }
         }

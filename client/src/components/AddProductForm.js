@@ -1,7 +1,7 @@
 import { React, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Paper, Typography } from '@mui/material';
+import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Input, Typography } from '@mui/material';
 
 import { StyledPaperForm } from '../styles/PaperStyles';
 import { addProduct } from '../features/product/productThunks';
@@ -15,6 +15,7 @@ const AddProductForm = () => {
     const [tag, setTag] = useState("");
     const [size, setSize] = useState("");
     const [gender, setGender] = useState("");
+    const [image, setImage] = useState([]);
 
     const navigate =  useNavigate();
     const dispatch = useDispatch();
@@ -32,24 +33,47 @@ const AddProductForm = () => {
         'mens', 'womens', 'other'
     ]
     
+    const handleImageChange = (e) => {
+        const {length, ...files} = e.target.files;
+        setImage(Object.values(files));
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const prod = {
-            name,
-            price,
-            description,
-            quantity,
-            tag,
-            size,
-            gender
+        let prod = new FormData();
+        prod.append('name', name);
+        prod.append('price', price);
+        prod.append('description', description);
+        prod.append('quantity', quantity);
+        prod.append('tag', tag);
+        prod.append('size', size);
+        prod.append('gender', gender);
+        // prod.append('image', image);
+
+        for (let i=0; i < image.length; i++) {
+            prod.append(`image${i}`, image[i])
         }
+
+        // console.log('image jsonstringify', JSON.stringify(image))
+        // for (let i of prod.values()) console.log(i)
+        // const prod = {
+        //     name,
+        //     price,
+        //     description,
+        //     quantity,
+        //     tag,
+        //     size,
+        //     gender,
+        //     image
+        // }
         dispatch(addProduct({prod, type}))
-        navigate('/products');
+        // navigate('/products');
     }
 
     return (
         <StyledPaperForm>
             <Typography align='center' variant='h4'>add a new product</Typography>
+            {console.log('image', image)}
             <form onSubmit={handleSubmit}>
                 <div>
                     <FormControl sx={{marginY: '1rem'}}>
@@ -172,6 +196,18 @@ const AddProductForm = () => {
                         {all_genders.map((g) => <MenuItem key={g} value={g}>{g}</MenuItem>)}
                     </Select>
                 </FormControl>
+
+                <label htmlFor="contained-button-file">
+                    <Input 
+                        inputProps={{
+                            multiple: true,
+                            accept:"image/*",
+                            type:"file"
+                        }}
+                        sx={{marginBottom: 10}}
+                        id="contained-button-file"
+                        onChange={handleImageChange}/>
+                </label>
 
                 <div>
                     <Button type='submit' variant='outlined' fullWidth>add item</Button>

@@ -91,6 +91,17 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+
+
+def get_upload_path(instance, filename):
+    return f'products/{filename}'
+
+class Image(models.Model):
+    name = models.CharField(max_length=200)
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=get_upload_path, default='default.jpg')
+    default = models.BooleanField(default=False)
+
 '''
 maybe this can be in a separate app
 can also think of this as a comment 

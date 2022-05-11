@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Apparel, Climbing, Tag, Product
+from .models import Apparel, Climbing, Tag, Product, Image
 
 class TagSerializer(serializers.ModelSerializer):
     apparel_related = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name')
@@ -33,12 +33,24 @@ class ClimbingSerializer(serializers.ModelSerializer):
         model = Climbing
         fields = ['id', 'name', 'price', 'description', 'quantity', 'tag', 'tag_name']
 
+
+class ImageSerializer(serializers.ModelSerializer):
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), write_only=True, many=False)
+    product_related = serializers.SlugRelatedField(read_only=True, many=False, slug_field='name')
+
+    class Meta:
+        model = Image
+        fields = ['id', 'name', 'product', 'product_related', 'image', 'default']
+        read_only_fields = ['default']
+
+
 class ProductSerializer(serializers.ModelSerializer):
     tag = serializers.SlugRelatedField(queryset=Tag.objects.all(), write_only=True, slug_field='name')
     tag_name = serializers.ReadOnlyField(source='tag.name')
     size = serializers.CharField(source='apparel.size', max_length=100, read_only=True, required=False)
     gender = serializers.CharField(source='apparel.gender', max_length=100, read_only=True, required=False)
+    images = ImageSerializer(many=True)
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'description', 'quantity', 'tag', 'tag_name', 'size', 'gender']
+        fields = ['id', 'name', 'price', 'description', 'quantity', 'images', 'tag', 'tag_name', 'size', 'gender']
