@@ -29,11 +29,22 @@ export const addItem = createAsyncThunk(
 
 export const editItem = createAsyncThunk(
     'order/editItem',
-    async (updateData) => {
+    async (updateData, thunkAPI) => {
         const config = setAxiosConfig();
-        console.log('updatedata in edititem thunk', updateData)
-        const res = await axiosAuth.put(`${url}/orders/item/${updateData.id}/`, updateData.data, config);
-        return res.data
+
+        try {
+            const res = await axiosAuth.put(`${url}/orders/item/${updateData.id}/`, updateData.data, config);
+            // const res = await axiosAuth.put(`${url}/orders/item/99/`, updateData.data, config);
+            return res.data
+        } catch (error) {
+            // if i catch 404, breaks app because cartpage is updating cart after mount
+            //      BUT with strict mode on cartpage updates cart twice, the first one is blocked by isMounted flag
+            //          but second one goes through with initial invalid data
+            // BUT what if a real 404 comes up?
+            if (error.response.data.status_code !== 404) {
+                return thunkAPI.rejectWithValue(error.response.data)    
+            }
+        }
     }
 )
 

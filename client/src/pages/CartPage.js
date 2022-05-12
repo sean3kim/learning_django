@@ -1,6 +1,6 @@
-import { React, useEffect, useState } from 'react';
+import { React, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Paper, Typography, Stack, Divider, Container, TextField } from '@mui/material';
+import { Button, Paper, Typography, Stack, Divider, Container, TextField, Alert } from '@mui/material';
 
 import { getActiveOrder, editItem, removeItem } from '../features/order/orderThunks';
 
@@ -9,9 +9,11 @@ const CartPage = () => {
     const [quantity, setQuantity] = useState(1)
     const [totalPrice, setTotalPrice] = useState(0);
     const [totalQuantity, setTotalQuantity] = useState(0);
+    const isMounted = useRef(false);
     const dispatch = useDispatch();
 
     let order = useSelector((state) => state.order)
+    let errorMessage = useSelector((state) => state.order.errorMessage);
 
     useEffect(() => {
         dispatch(getActiveOrder());
@@ -22,8 +24,14 @@ const CartPage = () => {
     }, [order.items])
 
     useEffect(() => {
-        // ok now just need to figure how to prevent updatecart from running on mount, only after mount
-        updateCart();
+        // will see a dispatch going out in dev (and returning 404) because react strict mode is on which renders twice initially
+        //  with strict mode commented out, no error and only renders once
+        //  allowing the isMounted Ref to work as intended
+        if (isMounted.current) {
+            updateCart();
+        } else {
+            isMounted.current = true;
+        }
     }, [quantity, updateProduct])
 
 
@@ -60,6 +68,7 @@ const CartPage = () => {
     return (
         <Container>
             <Paper sx={{paddingX: 2, paddingY: 1}}>
+                {errorMessage && <Alert severity='error' variant='outlined'>{errorMessage}</Alert>}
                 <Typography>C A R T</Typography>
                 <Stack divider={<Divider />}>
                     {(order && order.items) &&
@@ -68,6 +77,7 @@ const CartPage = () => {
                                 {i.product_related.name}, price: {i.product_related.price*i.quantity}, quantity: 
                                 <TextField
                                     sx={{maxWidth: '4rem', maxHeight: '6rem'}}
+                                    inputProps= {{max: i.product_related.quantity, min: 1}}
                                     size='small'
                                     variant='outlined'
                                     name={`${i.product_related.name}_quantity`}
@@ -76,7 +86,6 @@ const CartPage = () => {
                                     defaultValue={i.quantity}
                                     required
                                     onChange={handleQuantityChange}
-                                    // onChange={(e) => setQuantity(e.target.value)}
                                 />
 
                                 <Button onClick={() => dispatch(removeItem(i.id))}>delete</Button>

@@ -47,8 +47,6 @@ const ProductPage = () => {
     return (
         <Container>
             <Paper>
-                {console.log('in product page', product)}
-                {console.log('quantity', quantity)}
                 {errorMessage && <Alert severity='error' variant='outlined'>{errorMessage}</Alert>}
                 {(success && !errorMessage) && <Alert severity='success' variant='outlined'>successfully added item to cart</Alert>}
                 <MyImageCarousel images={product.images} />
@@ -60,6 +58,7 @@ const ProductPage = () => {
                     <span>
                         <TextField
                             sx={{maxWidth: '6rem'}}
+                            inputProps={{max: product.quantity, min: 1}}
                             variant='outlined'
                             label='quantity'
                             name='quantity'

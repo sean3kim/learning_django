@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import NotFound
 from .models import Order, OrderItem, ShippingAddress
 from products.serializers import ApparelSerializer, ClimbingSerializer, ProductSerializer
 from products.models import Apparel, Climbing, Product
@@ -19,29 +20,27 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = ['id', 'product', 'product_related', 'order', 'quantity', 'date_added']
 
+    def validate(self, data):
+        '''make sure order item quantity is less than product quantity (how many in stock)'''
+        in_stock = data['product'].quantity
+        if in_stock < int(self.initial_data['quantity']):
+            # the data included in validation error shows up as response.data in exception handler
+            raise serializers.ValidationError({'message': 'cannot order more of the item than is in stock'}, 400)
+        return super().validate(data)
+
+
 '''
 here just send back the pks of the items and get the correct items in react store
 '''
 class OrderSerializer(serializers.ModelSerializer):
     customer = serializers.SlugRelatedField(many=False, read_only=True, slug_field='username')
     items = OrderItemSerializer(read_only=True, many=True)
-    # items = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
-    # items = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Order
         fields = ['id', 'customer', 'items', 'active', 'date_ordered', 'transaction_id']
         read_only_fields = ['active']
 
-    # def get_items(self, obj):
-    #     qs = obj.items.all()
-    #     serializer = OrderItemSerializer(qs, many=True)
-    #     final = []
-    #     for d in serializer.data:
-    #         final.append({'id': d['id'], 'product_id': d['product_related']['id'], 'quantity': d['quantity']})
-    #         # final[d['product_related']['id']] = d['quantity']
-    #     print('final', final)
-    #     return final
 
 class ActiveOrderSerializer(serializers.ModelSerializer):
     customer = serializers.SlugRelatedField(many=False, read_only=True, slug_field='username')

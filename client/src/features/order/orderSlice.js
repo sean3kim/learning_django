@@ -54,9 +54,15 @@ export const orderSlice = createSlice({
                     }
                     return item;
                 })
-                console.log('in edit item slice', state.items)
-                // state.items = [...state.items, action.payload];
                 state.errorMessage = '';
+                return state;
+            })
+            .addCase(editItem.rejected, (state, action) => {
+                if (Array.isArray(action.payload)) {
+                    state.errorMessage = action.payload.toString();
+                } else {
+                    state.errorMessage = action.payload;
+                }
                 return state;
             })
         builder
