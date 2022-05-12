@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import Cookie from 'js-cookie';
 import axios from 'axios';
+import { setAxiosConfig } from '../../utils';
 
 const url = 'http://localhost:8000/api'
 
@@ -25,9 +25,8 @@ export const getOneProduct = createAsyncThunk(
 export const deleteProduct = createAsyncThunk(
     'product/deleteProduct',
     async (id) => {
-        const csrftoken = Cookie.get('csrftoken');
-        const res = await axios.delete(`${url}/products/${id}/`, {withCredentials: true, headers: {'X-CSRFToken': csrftoken}})
-        console.log("in delete product thunk", res.data);
+        const config = setAxiosConfig();
+        const res = await axios.delete(`${url}/products/${id}/`, config)
         return res.data
     }
 )
@@ -35,14 +34,8 @@ export const deleteProduct = createAsyncThunk(
 export const addProduct = createAsyncThunk(
     'product/addProduct',
     async (item) => {
-        const csrftoken = Cookie.get('csrftoken');
-        const config = {
-            withCredentials: true,
-            headers: {
-                // 'Content-Type': 'multipart/form-data',
-                'X-CSRFToken': csrftoken
-            }
-        }
+        const config = setAxiosConfig();
+
         let specific_url = ""
         if (item.type === 'apparel') {
             specific_url = `${url}/products/apparel/`
@@ -57,13 +50,8 @@ export const addProduct = createAsyncThunk(
 export const editProduct = createAsyncThunk(
     'product/editProduct',
     async (item) => {
-        const csrftoken = Cookie.get('csrftoken');
-        const config = {
-            withCredentials: true,
-            headers: {
-                'X-CSRFToken': csrftoken
-            }
-        }
+        const config = setAxiosConfig();
+
         let specific_url = ""
         if (item.type === 'apparel') {
             specific_url = `${url}/products/apparel/${item.id}/`
@@ -71,7 +59,6 @@ export const editProduct = createAsyncThunk(
             specific_url = `${url}/products/climbing/${item.id}/`
         }
         const res = await axios.put(`${specific_url}`, item.product, config);
-        // const res = await axios.put(`${url}/products/${item.id}/`, item.product, config);
         return res.data;
     }
 )

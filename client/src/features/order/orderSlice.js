@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { getActiveOrder, addItem, removeItem } from './orderThunks'
+import { getActiveOrder, addItem, editItem, removeItem } from './orderThunks'
 import { loginUser, getLoginStatus } from '../user/userThunks';
 
 const initialState = {
     order: null,
-    items: []
+    items: [],
+    errorMessage: '',
 }
 
 /**
@@ -31,17 +32,37 @@ export const orderSlice = createSlice({
                 if (items && rest) {
                     state.items = items;
                     state.order = rest;
+                    state.errorMessage = '';
                 }
                 return state;
             })
         builder
             .addCase(addItem.fulfilled, (state, action) => {
                 state.items = [...state.items, action.payload];
+                state.errorMessage = '';
+                return state;
+            })
+            .addCase(addItem.rejected, (state, action) => {
+                state.errorMessage = action.payload;
+                return state;
+            })
+        builder
+            .addCase(editItem.fulfilled, (state, action) => {
+                state.items = state.items.map((item) => {
+                    if (item.id === action.payload.id) {
+                        return action.payload;
+                    }
+                    return item;
+                })
+                console.log('in edit item slice', state.items)
+                // state.items = [...state.items, action.payload];
+                state.errorMessage = '';
                 return state;
             })
         builder
             .addCase(removeItem.fulfilled, (state, action) => {
                 state.items = state.items.filter((item) => item.id !== action.payload)
+                state.errorMessage = '';
                 return state
             })
         builder

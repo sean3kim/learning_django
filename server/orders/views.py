@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -50,9 +51,10 @@ class OrderItemListCreateView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
+        try:
+            self.perform_create(serializer)
+        except IntegrityError as e:
+            raise IntegrityError(e.__cause__)
         return Response(serializer.data)
 
 # removed IsOwner permission -- need to revisit if i need it or not

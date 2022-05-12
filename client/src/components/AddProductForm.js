@@ -48,26 +48,13 @@ const AddProductForm = () => {
         prod.append('tag', tag);
         prod.append('size', size);
         prod.append('gender', gender);
-        // prod.append('image', image);
 
         for (let i=0; i < image.length; i++) {
             prod.append(`image${i}`, image[i])
         }
 
-        // console.log('image jsonstringify', JSON.stringify(image))
-        // for (let i of prod.values()) console.log(i)
-        // const prod = {
-        //     name,
-        //     price,
-        //     description,
-        //     quantity,
-        //     tag,
-        //     size,
-        //     gender,
-        //     image
-        // }
-        dispatch(addProduct({prod, type}))
-        // navigate('/products');
+        dispatch(addProduct({prod, type}));
+        navigate('/products');
     }
 
     return (

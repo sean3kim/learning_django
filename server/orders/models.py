@@ -15,8 +15,6 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     product = models.OneToOneField(Product, related_name='orderitem', on_delete=models.CASCADE, default=None)
-    # apparel = models.ForeignKey(Apparel, on_delete=models.CASCADE, blank=True, null=True)
-    # climbing = models.ForeignKey(Climbing, on_delete=models.CASCADE, blank=True, null=True)
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
     date_added = models.DateTimeField(auto_now_add=True)

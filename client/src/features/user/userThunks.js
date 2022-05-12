@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { setAxiosConfig } from '../../utils';
 import Cookie from 'js-cookie';
+import { axiosAuth } from '../../axios';
 import axios from 'axios';
 
 const url = 'http://localhost:8000/api'
@@ -14,21 +15,9 @@ axios interceptor will get the jwt while the final endpoint to users/login will 
 export const loginUser = createAsyncThunk(
     'users/loginUser',
     async (loginCred) => {
-        const csrftoken = Cookie.get('csrftoken')
-
-        // 
-        const ax = axios.create()
-        ax.interceptors.request.use(
-            async (config) => {
-                // do something before request
-                await axios.post(`${url}/token/`, loginCred, {withCredentials: true});
-                return config;
-            }, (error) => {
-                return Promise.reject(error);
-            })
-
-        const res = await ax.post(`${url}/users/login/`, loginCred, {withCredentials: true, headers: {'X-CSRFToken': csrftoken}})
-        return res.data
+        const config = setAxiosConfig();
+        const res = await axiosAuth.post(`${url}/users/login/`, loginCred, config);
+        return res.data;
     }
 )
 
