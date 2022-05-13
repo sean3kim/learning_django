@@ -56,3 +56,13 @@ export const removeItem = createAsyncThunk(
         return id;
     }
 )
+
+export const addAddress = createAsyncThunk(
+    'order/addAddress',
+    async (add) => {
+        const config = setAxiosConfig();
+        const res = await axiosAuth.post(`${url}/orders/address/`, add, config);
+        console.log('server response data', res.data)
+        return res.data;
+    }
+)

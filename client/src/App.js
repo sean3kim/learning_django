@@ -9,6 +9,7 @@ import HomePage from './pages/HomePage';
 import GetAdminAuth from './authentication/GetAdminAuth';
 import NoPermissions from './pages/NoPermissions';
 import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
 import Layout from './components/Layout';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { useEffect } from 'react';
@@ -45,6 +46,7 @@ function App() {
               <Route path='/users/register' element={<RegisterPage />} />
               <Route path='/orders' element={<CartPage />} />
               <Route path='/noauth' element={<NoPermissions />} />
+              <Route path='/checkout' element={<CheckoutPage />} />
             </Routes>
           </Layout>
         </div>

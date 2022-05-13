@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound
 from .models import Order, OrderItem, ShippingAddress
-from products.serializers import ApparelSerializer, ClimbingSerializer, ProductSerializer
-from products.models import Apparel, Climbing, Product
+from products.serializers import ProductSerializer
+from products.models import Product
+from users.models import MyUser
+from orders.models import Order
 
 
 '''
@@ -53,8 +54,11 @@ class ActiveOrderSerializer(serializers.ModelSerializer):
     
 
 class ShippingAddressSerializer(serializers.ModelSerializer):
-    customer = serializers.SlugRelatedField(many=False, read_only=True, slug_field='username')
+    customer = serializers.SlugRelatedField(queryset=MyUser.objects.all(), many=False, slug_field='username')
+
+    # might need to change this to 1-1 field in model
+    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all(), many=False)
 
     class Meta:
         model = ShippingAddress
-        fields = ['id', 'customer', 'address', 'state', 'city', 'zip']
+        fields = ['id', 'customer', 'order', 'address', 'state', 'city', 'zip']

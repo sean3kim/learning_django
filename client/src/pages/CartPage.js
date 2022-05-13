@@ -1,5 +1,6 @@
 import { React, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { Button, Paper, Typography, Stack, Divider, Container, TextField, Alert } from '@mui/material';
 
 import { getActiveOrder, editItem, removeItem } from '../features/order/orderThunks';
@@ -96,6 +97,9 @@ const CartPage = () => {
                         <Typography>Total: {totalPrice}, Items: {totalQuantity}</Typography>
                     </Paper>
                 </Stack>
+                <Link to='/checkout' state={{order}} >
+                    <Button variant='outlined'>checkout</Button>
+                </Link>
             </Paper>
         </Container>
     )
