@@ -97,7 +97,7 @@ const CartPage = () => {
                         <Typography>Total: {totalPrice}, Items: {totalQuantity}</Typography>
                     </Paper>
                 </Stack>
-                <Link to='/checkout' state={{order}} >
+                <Link to='/checkout' >
                     <Button variant='outlined'>checkout</Button>
                 </Link>
             </Paper>

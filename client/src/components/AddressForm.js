@@ -1,7 +1,7 @@
 import { React, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Container, Paper, TextField, Button } from '@mui/material';
+import { Container, Paper, TextField, Button, Alert } from '@mui/material';
 
 import { addAddress } from '../features/order/orderThunks';
 
@@ -17,18 +17,19 @@ const AddressForm = () => {
 
     const user = useSelector((state) => state.user.username);
     const order = useSelector((state) => state.order.order);
+    const errorMessage = useSelector((state) => state.order.errorMessage);
 
     const dispatch = useDispatch();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(addAddress({...shipAddress, customer: user, order: order.id}))
-
     }
 
     return (
         <Container>
             <Paper>
+                {errorMessage && <Alert severity='error' variant='outlined'>{errorMessage}</Alert>}
                 <form onSubmit={handleSubmit}>
                     <TextField 
                         sx={{marginY: '1rem'}} 
