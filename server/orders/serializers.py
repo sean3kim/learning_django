@@ -4,6 +4,8 @@ from products.serializers import ProductSerializer
 from products.models import Product
 from users.models import MyUser
 from orders.models import Order
+from server.utils import is_valid_state
+import re
 
 
 '''
@@ -62,3 +64,23 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingAddress
         fields = ['id', 'customer', 'order', 'address', 'state', 'city', 'zip']
+
+    def validate_address(self, value):
+        # expecting a string with '<numbers> <anything> <anything>'
+        split_address = value.split()
+        match = re.search('^[0-9]*$', split_address[0])
+        if len(split_address) != 3 or not match:
+            raise serializers.ValidationError("please enter an address '<numbers> <anything> <anything>' format", 400)
+        return value
+
+    def validate_state(self, value):
+        if len(value) != 2:
+            raise serializers.ValidationError('please enter 2 letter state abbreviation', 400)
+        if not is_valid_state(value):
+            raise serializers.ValidationError('not a valid state', 400)
+        return value
+
+    def validate_zip(self, value):
+        if len(value) != 5:
+            raise serializers.ValidationError('zip code must be a 5 digit number', 400)
+        return value

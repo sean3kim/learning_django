@@ -23,8 +23,8 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getLoginStatus());
-  }, [])
+    // dispatch(getLoginStatus());
+  }, [dispatch])
 
   return (
     <ThemeProvider theme={theme}>

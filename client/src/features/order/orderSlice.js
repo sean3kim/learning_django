@@ -80,11 +80,15 @@ export const orderSlice = createSlice({
             })
         builder
             .addCase(addAddress.fulfilled, (state, action) => {
-                // going to assume {id, customer_related, order, address, state, city, zip}
                 console.log('add address action payload', action.payload)
                 // update address in state
                 const {customer_related, order, ...add} = action.payload;
-                state.address = { ...add }
+                state.address = { ...add };
+                return state;
+            })
+            .addCase(addAddress.rejected, (state, action) => {
+                console.log('add address rejected action payload', action.payload);
+                state.errorMessage = action.payload.toString();
                 return state;
             })
         builder
