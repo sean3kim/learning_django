@@ -1,11 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { getActiveOrder, addItem, editItem, removeItem } from './orderThunks'
+import { getActiveOrder, addItem, editItem, removeItem, addAddress } from './orderThunks'
 import { loginUser, getLoginStatus } from '../user/userThunks';
 
 const initialState = {
     order: null,
     items: [],
+    address: {
+        id: '',
+        address: '',
+        state: '',
+        city: '',
+        zip: '',
+    },
     errorMessage: '',
 }
 
@@ -70,6 +77,19 @@ export const orderSlice = createSlice({
                 state.items = state.items.filter((item) => item.id !== action.payload)
                 state.errorMessage = '';
                 return state
+            })
+        builder
+            .addCase(addAddress.fulfilled, (state, action) => {
+                console.log('add address action payload', action.payload)
+                // update address in state
+                const {customer_related, order, ...add} = action.payload;
+                state.address = { ...add };
+                return state;
+            })
+            .addCase(addAddress.rejected, (state, action) => {
+                console.log('add address rejected action payload', action.payload);
+                state.errorMessage = action.payload.toString();
+                return state;
             })
         builder
             .addCase(loginUser.fulfilled, (state, action) => {

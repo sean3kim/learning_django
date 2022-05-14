@@ -1,8 +1,11 @@
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound
 from .models import Order, OrderItem, ShippingAddress
-from products.serializers import ApparelSerializer, ClimbingSerializer, ProductSerializer
-from products.models import Apparel, Climbing, Product
+from products.serializers import ProductSerializer
+from products.models import Product
+from users.models import MyUser
+from orders.models import Order
+from server.utils import is_valid_state
+import re
 
 
 '''
@@ -53,8 +56,31 @@ class ActiveOrderSerializer(serializers.ModelSerializer):
     
 
 class ShippingAddressSerializer(serializers.ModelSerializer):
-    customer = serializers.SlugRelatedField(many=False, read_only=True, slug_field='username')
+    customer = serializers.SlugRelatedField(queryset=MyUser.objects.all(), many=False, slug_field='username')
+
+    # might need to change this to 1-1 field in model
+    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all(), many=False)
 
     class Meta:
         model = ShippingAddress
-        fields = ['id', 'customer', 'address', 'state', 'city', 'zip']
+        fields = ['id', 'customer', 'order', 'address', 'state', 'city', 'zip']
+
+    def validate_address(self, value):
+        # expecting a string with '<numbers> <anything> <anything>'
+        split_address = value.split()
+        match = re.search('^[0-9]*$', split_address[0])
+        if len(split_address) != 3 or not match:
+            raise serializers.ValidationError("please enter an address '<numbers> <anything> <anything>' format", 400)
+        return value
+
+    def validate_state(self, value):
+        if len(value) != 2:
+            raise serializers.ValidationError('please enter 2 letter state abbreviation', 400)
+        if not is_valid_state(value):
+            raise serializers.ValidationError('not a valid state', 400)
+        return value
+
+    def validate_zip(self, value):
+        if len(value) != 5:
+            raise serializers.ValidationError('zip code must be a 5 digit number', 400)
+        return value

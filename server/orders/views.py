@@ -82,8 +82,8 @@ class ShippingAddressListCreateView(generics.ListCreateAPIView):
     serializer_class = ShippingAddressSerializer
     permission_classes = [IsAuthenticated]
 
-# create a custom permission for IsOwner
 class ShippingAddressDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ShippingAddress.objects.all()
     serializer_class = ShippingAddressSerializer
     permission_classes = [IsAuthenticated, IsOwner]
+    lookup_field = 'pk'

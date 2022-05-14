@@ -34,10 +34,7 @@ def custom_exception_handler(exc, context):
             response.data['type'] = 'AuthenticationFailed'
             return Response({"error": "AuthenticationFailed"})
         elif isinstance(exc, exceptions.ValidationError):
-            print(response.data)
-            return Response(response.data['message'], status=status.HTTP_400_BAD_REQUEST)
-        elif isinstance(exc, exceptions.NotFound):
-            print(response.data)
-            return Response('item not found', status=status.HTTP_404_NOT_FOUND)
+            res = list(response.data.values())[0]
+            return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
     return response

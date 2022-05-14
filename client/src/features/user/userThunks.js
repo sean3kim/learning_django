@@ -16,7 +16,19 @@ export const loginUser = createAsyncThunk(
     'users/loginUser',
     async (loginCred) => {
         const config = setAxiosConfig();
-        const res = await axiosAuth.post(`${url}/users/login/`, loginCred, config);
+
+        const token_auth = {username: loginCred.username, password: loginCred.password};
+        const ax = axios.create();
+        ax.interceptors.request.use(
+            async (config) => {
+                await axios.post(`${url}/token/`, token_auth, config);
+                return config;
+            },
+            async (err) => {
+                return Promise.reject(err);
+            }
+        )
+        const res = await ax.post(`${url}/users/login/`, loginCred, config);
         return res.data;
     }
 )

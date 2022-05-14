@@ -56,3 +56,18 @@ export const removeItem = createAsyncThunk(
         return id;
     }
 )
+
+export const addAddress = createAsyncThunk(
+    'order/addAddress',
+    async (add, thunkAPI) => {
+        const config = setAxiosConfig();
+        try {
+            const res = await axiosAuth.post(`${url}/orders/address/`, add, config);
+            console.log('server response data', res.data)
+            return res.data;
+        } catch (error) {
+            console.log('caught error in thunk', error.response.data)
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+)

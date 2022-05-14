@@ -76,7 +76,7 @@ class LoginView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         qs = self.get_queryset()
         user = qs.filter(username=request.data['username']).first()
-        user.email = 'test@test.com'
+        # user.email = 'test@test.com'
         serializer = UserSerializer(user)
         return Response(serializer.data)
 

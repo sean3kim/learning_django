@@ -1,8 +1,7 @@
 from django.db import models
 from users.models import MyUser
-from products.models import Apparel, Climbing, Product
+from products.models import Product
 
-# Create your models here.
 
 class Order(models.Model):
     customer = models.ForeignKey(MyUser, on_delete=models.CASCADE, blank=True, null=True)
