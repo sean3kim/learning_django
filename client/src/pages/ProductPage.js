@@ -2,7 +2,7 @@ import { React, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getOneProduct, deleteProduct } from '../features/product/productThunks';
-import { Container, Paper, Button, Alert, TextField } from '@mui/material';
+import { Container, Paper, Typography, Grid, Button, Alert, TextField } from '@mui/material';
 import MyImageCarousel from '../components/MyImageCarousel';
 
 import { getActiveOrder, addItem } from '../features/order/orderThunks';
@@ -18,6 +18,7 @@ const ProductPage = () => {
     const product = useSelector((state) => state.product.byId[params.id]);
     const order = useSelector((state) => state.order.order);
     const errorMessage = useSelector((state) => state.order.errorMessage);
+    const isAdmin = useSelector((state) => state.user.isAdmin);
 
     // if the item is in the store already, grab from there
     // else dispatch an action to retrieve from server
@@ -46,35 +47,54 @@ const ProductPage = () => {
 
     return (
         <Container>
-            <Paper>
-                {errorMessage && <Alert severity='error' variant='outlined'>{errorMessage}</Alert>}
-                {(success && !errorMessage) && <Alert severity='success' variant='outlined'>successfully added item to cart</Alert>}
-                <MyImageCarousel images={product.images} />
+            <Paper sx={{height: '800px'}}>
+            {errorMessage && <Alert severity='error' variant='outlined'>{errorMessage}</Alert>}
+            {(success && !errorMessage) && <Alert severity='success' variant='outlined'>successfully added item to cart</Alert>}
+                <Grid container >
+                    <Grid item s={6}>
+                        <MyImageCarousel images={product.images} />
+                    </Grid>
+                    <Grid item s={6}>
+                        <div style={{marginTop: '24px'}}>
+                            <Typography variant='h4'>{product && product.name}</Typography>
+                            <Typography>${product && product.price}</Typography>
+                            <br/>
+                            <Typography variant='h6'>Description</Typography>
+                            <Typography>{product && product.description}</Typography>
 
-                {product && product.name}
-
-                <hr></hr>
-                <div>
-                    <span>
-                        <TextField
-                            sx={{maxWidth: '6rem'}}
-                            inputProps={{max: product.quantity, min: 1}}
-                            variant='outlined'
-                            label='quantity'
-                            name='quantity'
-                            id='quantity'
-                            type='number'
-                            defaultValue={1}
-                            required
-                            // value={quantity}
-                            onChange={(e) => setQuantity(e.target.value)}
-                        />
-                        <Button onClick={addToCart}>add to cart</Button>
-                    </span>
-                </div>
-                <div>
-                    <Button onClick={handleDelete}>delete</Button>
-                </div>
+                            <br/>
+                            <div>
+                                {(product && product.size) && product.size}
+                                <span>
+                                    <TextField
+                                        sx={{maxWidth: '6rem'}}
+                                        inputProps={{
+                                            max: product.quantity, 
+                                            min: 1, 
+                                            style: {
+                                                height: '15px'
+                                        }}}
+                                        variant='outlined'
+                                        label='qty'
+                                        name='qty'
+                                        id='qty'
+                                        size='small'
+                                        type='number'
+                                        defaultValue={1}
+                                        required
+                                        onChange={(e) => setQuantity(e.target.value)}
+                                    />
+                                    <Button variant='outlined' sx={{height: '32px', paddingX: '7px', marginX: '5px'}} onClick={addToCart}>add to cart</Button>
+                                </span>
+                            </div>
+                            {isAdmin && 
+                                <div>
+                                    <Button variant='outlined' onClick={handleDelete}>delete</Button>
+                                </div>
+                            }
+                        </div>
+                    </Grid>
+                </Grid>
             </Paper>
         </Container>
     )

@@ -34,9 +34,25 @@ class OrderDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
         lookup = self.kwargs['pk']
         queryset = self.filter_queryset(self.get_queryset())
         if lookup == 'active':
-            filter_kwargs = {'active': True}
-            obj = get_object_or_404(queryset, **filter_kwargs)
-            self.check_object_permissions(self.request, obj)
+            filter_kwargs = {'customer': self.request.user, 'active': True}
+
+            active_exists = Order.objects.filter(
+                customer__username=self.request.user
+            ).filter(active=True).exists()
+
+            '''
+                had to turn off react strict mode because it was creating two orders with active=True and was causing get_object
+                or 404 to fail since it can only return 1 object but 2 exists
+            '''
+            if active_exists:
+                # if there is an active order for the user, retrieve it
+                obj = get_object_or_404(queryset, **filter_kwargs)
+                self.check_object_permissions(self.request, obj)
+            else:
+                # else create a new active order
+                serializer = self.get_serializer(data={'customer': self.request.user, 'active': True})
+                serializer.is_valid(raise_exception=True)
+                obj = serializer.save()
             return obj
         return super().get_object()
 

@@ -1,4 +1,5 @@
 import { React, useState } from 'react';
+import { Container, Typography } from '@mui/material';
 
 const MyImageCarousel = (props) => {
     const [currentImage, setCurrentImage] = useState(props.images[0].image);
@@ -21,10 +22,10 @@ const MyImageCarousel = (props) => {
     }
 
     return (
-        <div>
-            <p>click on image to view next photo</p>
-            <img src={currentImage} height='200' width='200' onClick={getNextSrc}/>
-        </div>
+        <Container sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginX: '20px', width: '400px'}}>
+            <Typography>click on image to view next photo</Typography>
+            <img src={currentImage} height='400' width='400' onClick={getNextSrc}/>
+        </Container>
     )
 }
 

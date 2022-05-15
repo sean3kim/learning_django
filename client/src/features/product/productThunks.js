@@ -16,7 +16,6 @@ export const getAllProduct = createAsyncThunk(
 export const getOneProduct = createAsyncThunk(
     'product/getOneProduct',
     async (id) => {
-        console.log("dispatched")
         const res = await axios.get(`${url}/products/${id}`, {withCredentials: true})
         return res.data
     }

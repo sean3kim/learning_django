@@ -36,13 +36,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
 here just send back the pks of the items and get the correct items in react store
 '''
 class OrderSerializer(serializers.ModelSerializer):
-    customer = serializers.SlugRelatedField(many=False, read_only=True, slug_field='username')
+    customer = serializers.SlugRelatedField(queryset=MyUser.objects.all(), many=False, slug_field='username')
     items = OrderItemSerializer(read_only=True, many=True)
 
     class Meta:
         model = Order
-        fields = ['id', 'customer', 'items', 'active', 'date_ordered', 'transaction_id']
-        read_only_fields = ['active']
+        fields = ['id', 'customer', 'items', 'active', 'date_ordered']
 
 
 class ActiveOrderSerializer(serializers.ModelSerializer):
@@ -51,7 +50,7 @@ class ActiveOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'customer', 'items', 'active', 'date_ordered', 'transaction_id']
+        fields = ['id', 'customer', 'items', 'active', 'date_ordered']
         read_only_fields = ['active']
     
 

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button, Paper, Typography, Stack, Divider, Container, TextField, Alert } from '@mui/material';
 
 import { getActiveOrder, editItem, removeItem } from '../features/order/orderThunks';
+import { getLoginStatus } from '../features/user/userThunks';
 
 const CartPage = () => {
     const [updateProduct, setUpdateProduct] = useState('');
@@ -17,6 +18,7 @@ const CartPage = () => {
     let errorMessage = useSelector((state) => state.order.errorMessage);
 
     useEffect(() => {
+        dispatch(getLoginStatus());
         dispatch(getActiveOrder());
     }, [dispatch])
 
@@ -68,37 +70,45 @@ const CartPage = () => {
 
     return (
         <Container>
-            <Paper sx={{paddingX: 2, paddingY: 1}}>
+            <Paper sx={{paddingX: 2, paddingY: 1}} elevation={0}>
                 {errorMessage && <Alert severity='error' variant='outlined'>{errorMessage}</Alert>}
                 <Typography>C A R T</Typography>
-                <Stack divider={<Divider />}>
+                <Stack divider={<Divider sx={{borderColor: 'black'}}/>}>
                     {(order && order.items) &&
                         order.items.map((i, index) => (
-                            <Paper key={index}>
-                                {i.product_related.name}, price: {i.product_related.price*i.quantity}, quantity: 
-                                <TextField
-                                    sx={{maxWidth: '4rem', maxHeight: '6rem'}}
-                                    inputProps= {{max: i.product_related.quantity, min: 1}}
-                                    size='small'
-                                    variant='outlined'
-                                    name={`${i.product_related.name}_quantity`}
-                                    id={`${i.product_related.name}_quantity`}
-                                    type='number'
-                                    defaultValue={i.quantity}
-                                    required
-                                    onChange={handleQuantityChange}
-                                />
-
-                                <Button onClick={() => dispatch(removeItem(i.id))}>delete</Button>
+                            <Paper key={index} elevation={0} sx={{marginY: '0.3rem'}}>
+                                <Typography sx={{float: 'left'}}>{i.product_related.name}</Typography>
+                                <Typography sx={{float: 'right'}}>
+                                    qty:
+                                    <TextField
+                                        sx={{marginX: '0.2rem', maxWidth: '4rem', maxHeight: '6rem'}}
+                                        inputProps= {{
+                                            max: i.product_related.quantity, 
+                                            min: 1,
+                                            style: {
+                                                height: '12px',
+                                                width: '30px'
+                                            }
+                                        }}
+                                        size='small'
+                                        variant='outlined'
+                                        name={`${i.product_related.name}_quantity`}
+                                        id={`${i.product_related.name}_quantity`}
+                                        type='number'
+                                        defaultValue={i.quantity}
+                                        required
+                                        onChange={handleQuantityChange}
+                                    />
+                                    price: ${i.product_related.price*i.quantity}
+                                </Typography>
+                                <Button variant='outlined' size='small' onClick={() => dispatch(removeItem(i.id))}>remove</Button>
                             </Paper>
                         ))
                     }
-                    <Paper>
-                        <Typography>Total: {totalPrice}, Items: {totalQuantity}</Typography>
-                    </Paper>
+                    <Typography>Total: {totalPrice}, Items: {totalQuantity}</Typography>
                 </Stack>
-                <Link to='/checkout' >
-                    <Button variant='outlined'>checkout</Button>
+                <Link to='/checkout' style={{textDecoration: 'none'}}>
+                    <Button variant='outlined' size='small' sx={{marginTop: '0.5rem'}}>checkout</Button>
                 </Link>
             </Paper>
         </Container>

@@ -33,10 +33,12 @@ class ApparelListCreateView(generics.ListCreateAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def create(self, request, *args, **kwargs):
+        print('reqeust data', request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         prod = self.perform_create(serializer)
 
+        print('prod', prod)
         image_array_data = []
         for key,value in request.data.items():
             if key.startswith('image'):
@@ -46,7 +48,7 @@ class ApparelListCreateView(generics.ListCreateAPIView):
                     'image': value,
                     'default': True
                 })
-        
+        print('image array data',  image_array_data) 
         # if no images were provided need to still provide data but with the image field missing
         #   if the image field is present, default is not set
         if len(image_array_data) == 0:
@@ -56,10 +58,13 @@ class ApparelListCreateView(generics.ListCreateAPIView):
                 'default': True
             })
 
+        print('image array data 2',  image_array_data) 
         imageSerializer = ImageSerializer(data=image_array_data, many=True)
         imageSerializer.is_valid(raise_exception=True)
         self.perform_create(imageSerializer)
         headers = self.get_success_headers(serializer.data)
+        serializer.data['images'] = imageSerializer.data
+        print('serializer data', serializer.data)
         return Response(serializer.data, headers=headers)
         
     def perform_create(self, serializer):

@@ -6,11 +6,10 @@ from products.models import Product
 class Order(models.Model):
     customer = models.ForeignKey(MyUser, on_delete=models.CASCADE, blank=True, null=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
-    transaction_id = models.CharField(max_length=100, null=True)
     active = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.transaction_id)
+        return str(self.id)
 
 class OrderItem(models.Model):
     product = models.OneToOneField(Product, related_name='orderitem', on_delete=models.CASCADE, default=None)

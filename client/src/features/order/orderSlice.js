@@ -96,19 +96,23 @@ export const orderSlice = createSlice({
                 // when a user logs in the response from server contains user details as well as list of orders, and within orders order items
                 // *** maybe can change this to just get the active order if any
                 //      if the user wants to look at previous orders, can grab them on that page load
-                const { items, ...rest } = action.payload.order;
-                if (items && rest) {
-                    state.items = items;
-                    state.order = rest;
+                if (action.payload.order) {
+                    const { items, ...rest } = action.payload.order;
+                    if (items && rest) {
+                        state.items = items;
+                        state.order = rest;
+                    }
                 }
                 return state;
             })
         builder
             .addCase(getLoginStatus.fulfilled, (state, action) => {
-                const { items, ...rest } = action.payload.order;
-                if (items && rest) {
-                    state.items = items;
-                    state.order = rest;
+                if (action.payload.order) {
+                    const { items, ...rest } = action.payload.order;
+                    if (items && rest) {
+                        state.items = items;
+                        state.order = rest;
+                    }
                 }
                 return state;
             })

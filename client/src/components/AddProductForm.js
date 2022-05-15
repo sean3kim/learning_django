@@ -54,13 +54,12 @@ const AddProductForm = () => {
         }
 
         dispatch(addProduct({prod, type}));
-        navigate('/products');
+        // navigate('/products');
     }
 
     return (
         <StyledPaperForm>
             <Typography align='center' variant='h4'>add a new product</Typography>
-            {console.log('image', image)}
             <form onSubmit={handleSubmit}>
                 <div>
                     <FormControl sx={{marginY: '1rem'}}>
