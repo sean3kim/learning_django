@@ -13,6 +13,7 @@ import { getActiveOrder, addItem } from '../features/order/orderThunks';
 const ProductPage = () => {
     const [quantity, setQuantity] = useState(1);
     const [success, setSuccess] = useState(false);
+    const [toggleReviewForm, setToggleReviewForm] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -33,7 +34,7 @@ const ProductPage = () => {
 
     const handleDelete = () => {
         dispatch(deleteProduct(product.id));
-        navigate('/products')
+        navigate('/products');
     }
 
     const addToCart = () => {
@@ -46,15 +47,19 @@ const ProductPage = () => {
         setSuccess(true);
     }
 
+    const handleToggleReviewForm = () => {
+        setToggleReviewForm(!toggleReviewForm);
+    }
+
 
     return (
         <Container>
-            <Paper sx={{height: '800px'}}>
+            <Paper sx={{paddingBottom: '1rem'}}>
             {errorMessage && <Alert severity='error' variant='outlined'>{errorMessage}</Alert>}
             {(success && !errorMessage) && <Alert severity='success' variant='outlined'>successfully added item to cart</Alert>}
                 <Grid container >
                     <Grid item s={6}>
-                        <MyImageCarousel images={product.images} />
+                        {(product && product.images) && <MyImageCarousel images={product.images} />}
                     </Grid>
                     <Grid item s={6}>
                         <div style={{marginTop: '24px'}}>
@@ -65,31 +70,32 @@ const ProductPage = () => {
                             <Typography>{product && product.description}</Typography>
 
                             <br/>
-                            <div>
-                                {(product && product.size) && 
-                                    <Typography>{product.size}</Typography>}
-                                <span>
-                                    <TextField
-                                        sx={{maxWidth: '6rem'}}
-                                        inputProps={{
-                                            max: product.quantity, 
-                                            min: 1, 
-                                            style: {
-                                                height: '15px'
-                                        }}}
-                                        variant='outlined'
-                                        label='qty'
-                                        name='qty'
-                                        id='qty'
-                                        size='small'
-                                        type='number'
-                                        defaultValue={1}
-                                        required
-                                        onChange={(e) => setQuantity(e.target.value)}
-                                    />
-                                    <Button variant='outlined' sx={{height: '32px', paddingX: '7px', marginX: '5px'}} onClick={addToCart}>add to cart</Button>
-                                </span>
-                            </div>
+                            {(product && product.size) && 
+                                <div>
+                                    <Typography>{product.size}</Typography>
+                                    <span>
+                                        <TextField
+                                            sx={{maxWidth: '6rem'}}
+                                            inputProps={{
+                                                max: product.quantity, 
+                                                min: 1, 
+                                                style: {
+                                                    height: '15px'
+                                            }}}
+                                            variant='outlined'
+                                            label='qty'
+                                            name='qty'
+                                            id='qty'
+                                            size='small'
+                                            type='number'
+                                            defaultValue={1}
+                                            required
+                                            onChange={(e) => setQuantity(e.target.value)}
+                                        />
+                                        <Button variant='outlined' sx={{height: '32px', paddingX: '7px', marginX: '5px'}} onClick={addToCart}>add to cart</Button>
+                                    </span>
+                                </div>
+                            }
                             {user.isStaff && 
                                 <div>
                                     <Button variant='outlined' onClick={handleDelete}>delete</Button>
@@ -99,8 +105,11 @@ const ProductPage = () => {
                     </Grid>
                 </Grid>
 
-                <ListReviews revs={product.reviews}/>
-                <AddReviewForm user={user.username} productId={product.id}/>
+                {(product && product.reviews) && <ListReviews prod={product} revs={product.reviews}/>}
+                {(toggleReviewForm && product && product.id) && <AddReviewForm user={user.username} productId={product.id}/>}
+                <Button onClick={handleToggleReviewForm}>
+                    {toggleReviewForm ? 'cancel' : 'leave a review'}
+                </Button>
             </Paper>
         </Container>
     )

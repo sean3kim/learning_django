@@ -17,7 +17,7 @@ export const getOneProduct = createAsyncThunk(
     'product/getOneProduct',
     async (id) => {
         const res = await axios.get(`${url}/products/${id}`, {withCredentials: true})
-        return res.data
+        return res.data;
     }
 )
 

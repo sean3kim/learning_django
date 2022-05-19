@@ -30,8 +30,11 @@ export const productSlice = createSlice({
             })
         builder
             .addCase(getOneProduct.fulfilled, (state, action) => {
+                console.log('get one product slice', action.payload)
                 const id = action.payload.id;
-                state.byId[id] = action.payload;
+                let revs = action.payload.reviews.map((r) => r.id);
+                state.byId[id] = {...action.payload};
+                state.byId[id].reviews = revs;
                 
                 if (!state.allIds.includes(id)) {
                     state.allIds.push(id);

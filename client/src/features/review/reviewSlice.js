@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getAllProduct } from '../product/productThunks';
+import { getAllProduct, getOneProduct } from '../product/productThunks';
 
 const initialState = {
     byId: {},
@@ -24,6 +24,20 @@ export const reviewSlice = createSlice({
                 })
                 state.byId = newById;
                 state.allIds = newAllIds;
+                return state;
+            })
+        builder
+            .addCase(getOneProduct.fulfilled, (state, action) => {
+                // getting reviews for one product if it is not in the store
+                // in case other products are in the store with other reviews, need to preserve those and just add the new ones
+                let newById = {...state.byId};
+                let newAllIds = [];
+                action.payload.reviews.forEach((review) => {
+                    newById[review.id] = review;
+                    newAllIds.push(review.id);
+                })
+                state.byId = {...state.byId, ...newById};
+                state.allIds = [...state.allIds, ...newAllIds];
                 return state;
             })
     }
