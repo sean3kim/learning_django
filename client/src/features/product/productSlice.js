@@ -18,11 +18,15 @@ export const productSlice = createSlice({
                 // state.byId = action.payload.map((item) => item)
                 let newState = {};
                 action.payload.forEach((item) => {
-                    newState[item.id] = item;
+                    // change item.reviews from [{id}, {id}, {id}]
+                    //      into [id, id, id]
+                    let revs = item.reviews.map((r) => r.id);
+                    newState[item.id] = {...item};
+                    newState[item.id].reviews = revs;
                 })
                 state.byId = newState;
                 state.allIds = action.payload.map((item) => item.id)
-                return state
+                return state;
             })
         builder
             .addCase(getOneProduct.fulfilled, (state, action) => {
@@ -36,22 +40,20 @@ export const productSlice = createSlice({
             })
         builder
             .addCase(deleteProduct.fulfilled, (state, action) => {
-                console.log("delete slice action payload", action.payload)
+                console.log('in delete', action.payload)
                 const id = action.payload.id;
                 delete state.byId[id]
                 state.allIds = state.allIds.filter((i) => i !== id)
-                return state
+                return state;
             })
         builder
             .addCase(addProduct.fulfilled, (state, action) => {
-                console.log("add product action payload", action.payload);
                 state.byId[action.payload.id] = action.payload;
                 state.allIds.push(action.payload.id);
                 return state
             })
         builder
             .addCase(editProduct.fulfilled, (state, action) => {
-                console.log("edit product action payload", action.payload);
                 state.byId[action.payload.id] = action.payload;
                 return state;
             })

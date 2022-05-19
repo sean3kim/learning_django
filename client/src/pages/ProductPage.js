@@ -4,6 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getOneProduct, deleteProduct } from '../features/product/productThunks';
 import { Container, Paper, Typography, Grid, Button, Alert, TextField } from '@mui/material';
 import MyImageCarousel from '../components/MyImageCarousel';
+import AddReviewForm from '../components/AddReviewForm';
+import ListReviews from '../components/ListReviews';
 
 import { getActiveOrder, addItem } from '../features/order/orderThunks';
 
@@ -18,7 +20,7 @@ const ProductPage = () => {
     const product = useSelector((state) => state.product.byId[params.id]);
     const order = useSelector((state) => state.order.order);
     const errorMessage = useSelector((state) => state.order.errorMessage);
-    const isAdmin = useSelector((state) => state.user.isAdmin);
+    const user = useSelector((state) => state.user);
 
     // if the item is in the store already, grab from there
     // else dispatch an action to retrieve from server
@@ -64,7 +66,8 @@ const ProductPage = () => {
 
                             <br/>
                             <div>
-                                {(product && product.size) && product.size}
+                                {(product && product.size) && 
+                                    <Typography>{product.size}</Typography>}
                                 <span>
                                     <TextField
                                         sx={{maxWidth: '6rem'}}
@@ -87,7 +90,7 @@ const ProductPage = () => {
                                     <Button variant='outlined' sx={{height: '32px', paddingX: '7px', marginX: '5px'}} onClick={addToCart}>add to cart</Button>
                                 </span>
                             </div>
-                            {isAdmin && 
+                            {user.isStaff && 
                                 <div>
                                     <Button variant='outlined' onClick={handleDelete}>delete</Button>
                                 </div>
@@ -95,6 +98,9 @@ const ProductPage = () => {
                         </div>
                     </Grid>
                 </Grid>
+
+                <ListReviews revs={product.reviews}/>
+                <AddReviewForm user={user.username} productId={product.id}/>
             </Paper>
         </Container>
     )

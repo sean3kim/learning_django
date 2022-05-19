@@ -14,11 +14,13 @@ import { combineReducers } from '@reduxjs/toolkit';
 import userReducer from '../features/user/userSlice';
 import productReducer from '../features/product/productSlice';
 import orderReducer from '../features/order/orderSlice';
+import reviewReducer from '../features/review/reviewSlice';
 
 const rootReducer = combineReducers({
     user: userReducer,
     product: productReducer,
-    order: orderReducer
+    order: orderReducer,
+    review: reviewReducer,
 })
 
 const persistConfig = {

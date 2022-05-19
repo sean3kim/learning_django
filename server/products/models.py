@@ -110,11 +110,3 @@ this will actually be related to both user and product
 product - manytomany on Product model
 user - onetomany on Review model
 '''
-# class Review(models.Model):
-#     title = models.CharField(max_length=200)
-#     body = models.TextField()
-#     rating = models.PositiveIntegerField(default=0)
-#     # user
-
-#     def __str__(self):
-#         return self.title

@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import Apparel, Climbing, Tag, Product, Image
 
+from reviews.serializers import ReviewSerializer
+
 class TagSerializer(serializers.ModelSerializer):
     apparel_related = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name')
     climbing_related = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name')
@@ -16,6 +18,13 @@ tag and tag_name:
 
     so - tag pk is being received and not sent, tag_name is not recieved but sent out
 '''
+class ApparelSerializer(serializers.ModelSerializer):
+    tag = serializers.SlugRelatedField(queryset=Tag.objects.all(), write_only=True, slug_field='name')
+    tag_name = serializers.ReadOnlyField(source='tag.name')
+
+    class Meta:
+        model = Apparel
+        fields = ['id', 'name', 'price', 'description', 'quantity', 'size', 'gender', 'tag', 'tag_name']
 
 
 class ClimbingSerializer(serializers.ModelSerializer):
@@ -43,21 +52,8 @@ class ProductSerializer(serializers.ModelSerializer):
     size = serializers.CharField(source='apparel.size', max_length=100, read_only=True, required=False)
     gender = serializers.CharField(source='apparel.gender', max_length=100, read_only=True, required=False)
     images = ImageSerializer(many=True)
+    reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'description', 'quantity', 'images', 'tag', 'tag_name', 'size', 'gender']
-
-class ApparelSerializer(serializers.ModelSerializer):
-    tag = serializers.SlugRelatedField(queryset=Tag.objects.all(), write_only=True, slug_field='name')
-    tag_name = serializers.ReadOnlyField(source='tag.name')
-    images = ImageSerializer(many=True)
-
-    class Meta:
-        model = Apparel
-        fields = ['id', 'name', 'price', 'description', 'quantity', 'images', 'size', 'gender', 'tag', 'tag_name']
-
-    def create(self, validated_data):
-        print('validated data', validated_data)
-        return super().create(validated_data)
-
+        fields = ['id', 'name', 'price', 'description', 'quantity', 'images', 'tag', 'tag_name', 'size', 'gender', 'reviews']

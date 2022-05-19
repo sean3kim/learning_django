@@ -25,7 +25,6 @@ const ListProducts = () => {
                     <Grid item xs={4} key={index}>
                         <Card variant='outlined' sx={{borderRadius: '0.2rem', padding: '0.2rem'}}>
                             <CardActionArea disableRipple component={Link} to={`${p.id}`}>
-                                {console.log('getting an error after adding a product', p.images)}
                                 <CardMedia 
                                     component='img'
                                     height='150'

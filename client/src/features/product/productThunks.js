@@ -9,7 +9,7 @@ export const getAllProduct = createAsyncThunk(
     'product/getAllProduct',
     async () => {
         const res = await axios.get(`${url}/products/`, {withCredentials: true});
-        return res.data
+        return res.data;
     }
 )
 

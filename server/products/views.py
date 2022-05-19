@@ -23,6 +23,13 @@ class ProductDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminOrReadOnly]
     lookup_field = 'pk'
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        deleted_item = serializer.data
+        self.perform_destroy(instance)
+        return Response(deleted_item)
+
 '''
 Apparel views
 '''
@@ -32,13 +39,18 @@ class ApparelListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAdminOrReadOnly]
     parser_classes = [MultiPartParser, FormParser]
 
+    '''
+    this one is busted and needs to be refactored:
+    exploring a little bit, need to override the serializers create, not the views
+        to do this need to add images to apparel serializer
+        which would then require the client form to send an explicit 'images' field
+        which would then require a way to figure out how to stringify a list of images in react
+    '''
     def create(self, request, *args, **kwargs):
-        print('reqeust data', request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         prod = self.perform_create(serializer)
 
-        print('prod', prod)
         image_array_data = []
         for key,value in request.data.items():
             if key.startswith('image'):
@@ -48,7 +60,6 @@ class ApparelListCreateView(generics.ListCreateAPIView):
                     'image': value,
                     'default': True
                 })
-        print('image array data',  image_array_data) 
         # if no images were provided need to still provide data but with the image field missing
         #   if the image field is present, default is not set
         if len(image_array_data) == 0:
@@ -58,14 +69,13 @@ class ApparelListCreateView(generics.ListCreateAPIView):
                 'default': True
             })
 
-        print('image array data 2',  image_array_data) 
         imageSerializer = ImageSerializer(data=image_array_data, many=True)
         imageSerializer.is_valid(raise_exception=True)
         self.perform_create(imageSerializer)
         headers = self.get_success_headers(serializer.data)
-        serializer.data['images'] = imageSerializer.data
-        print('serializer data', serializer.data)
-        return Response(serializer.data, headers=headers)
+        obj = Product.objects.get(id=prod.id)
+        prod_obj = ProductSerializer(obj)
+        return Response(prod_obj.data, headers=headers)
         
     def perform_create(self, serializer):
         return serializer.save()
@@ -120,7 +130,8 @@ class ClimbingListCreateView(generics.ListCreateAPIView):
                     'image': value,
                     'default': True
                 })
-
+        # if no images were provided need to still provide data but with the image field missing
+        #   if the image field is present, default is not set
         if len(image_array_data) == 0:
             image_array_data.append({
                 'name': 'default',
@@ -132,7 +143,9 @@ class ClimbingListCreateView(generics.ListCreateAPIView):
         imageSerializer.is_valid(raise_exception=True)
         self.perform_create(imageSerializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, headers=headers)
+        obj = Product.objects.get(id=prod.id)
+        prod_obj = ProductSerializer(obj)
+        return Response(prod_obj.data, headers=headers)
 
     def perform_create(self, serializer):
         return serializer.save()

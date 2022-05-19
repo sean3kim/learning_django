@@ -15,6 +15,7 @@ import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getLoginStatus } from './features/user/userThunks';
+import { getAllProduct } from './features/product/productThunks';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './styles/Styles';
 
