@@ -1,14 +1,20 @@
+from django.conf import settings
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.views import View
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+import json
+import stripe
 
 from .permissions import IsOwner
 from .models import Order, OrderItem, ShippingAddress
 from .serializers import OrderSerializer, OrderItemSerializer, ShippingAddressSerializer
 
 from products.models import Product
+from .models import OrderItem
 
 # Create your views here.
 
@@ -103,3 +109,33 @@ class ShippingAddressDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIVie
     serializer_class = ShippingAddressSerializer
     permission_classes = [IsAuthenticated, IsOwner]
     lookup_field = 'pk'
+
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+class StripeIntentView(View):
+    def post(self, request, *args, **kwargs):
+        print('in stripeintentview post')
+        try:
+            # request.body is a bytestring and need json.loads to turn it into an actual dictionary
+            data = json.loads(request.body)
+            # from a list of orderItem ids, get all the orderItem instances and populate the product field so that another database hit doesn't occur when doing object_instance.product
+            objects = OrderItem.objects.select_related('product').filter(id__in=data['items'])
+            total = 0
+            for e in objects:
+                total += e.product.price * e.quantity * 100
+            # Create a PaymentIntent with the order amount and currency
+            intent = stripe.PaymentIntent.create(
+                amount=int(total),
+                currency='usd',
+                # automatic_payment_methods={
+                #     'enabled': True,
+                # },
+            )
+            return JsonResponse({
+                'clientSecret': intent['client_secret']
+            })
+            # return JsonResponse({'testing': 'hello'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})

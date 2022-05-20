@@ -78,29 +78,27 @@ const CartPage = () => {
                         order.items.map((i, index) => (
                             <Paper key={index} elevation={0} sx={{marginY: '0.3rem'}}>
                                 <Typography sx={{float: 'left'}}>{i.product_related.name}</Typography>
-                                <Typography sx={{float: 'right'}}>
-                                    qty:
-                                    <TextField
-                                        sx={{marginX: '0.2rem', maxWidth: '4rem', maxHeight: '6rem'}}
-                                        inputProps= {{
-                                            max: i.product_related.quantity, 
-                                            min: 1,
-                                            style: {
-                                                height: '12px',
-                                                width: '30px'
-                                            }
-                                        }}
-                                        size='small'
-                                        variant='outlined'
-                                        name={`${i.product_related.name}_quantity`}
-                                        id={`${i.product_related.name}_quantity`}
-                                        type='number'
-                                        defaultValue={i.quantity}
-                                        required
-                                        onChange={handleQuantityChange}
-                                    />
-                                    price: ${i.product_related.price*i.quantity}
-                                </Typography>
+                                <TextField
+                                    sx={{marginX: '0.2rem', maxWidth: '4rem', maxHeight: '6rem', float:'right'}}
+                                    inputProps= {{
+                                        max: i.product_related.quantity, 
+                                        min: 1,
+                                        style: {
+                                            height: '12px',
+                                            width: '30px'
+                                        }
+                                    }}
+                                    size='small'
+                                    variant='outlined'
+                                    name={`${i.product_related.name}_quantity`}
+                                    id={`${i.product_related.name}_quantity`}
+                                    type='number'
+                                    defaultValue={i.quantity}
+                                    required
+                                    onChange={handleQuantityChange}
+                                />
+                                <Typography sx={{float: 'right'}}>qty:</Typography>
+                                <Typography sx={{float: 'right'}}>price: ${i.product_related.price*i.quantity}</Typography>
                                 <Button variant='outlined' size='small' onClick={() => dispatch(removeItem(i.id))}>remove</Button>
                             </Paper>
                         ))
