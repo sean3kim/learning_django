@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useElements, useStripe, PaymentElement } from '@stripe/react-stripe-js';
 
 const PaymentForm = ({clientSecret}) => {
@@ -7,6 +8,8 @@ const PaymentForm = ({clientSecret}) => {
 
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const orderId = useSelector((state) => state.order.order.id);
 
     useEffect(() => {
         if (!stripe) {
@@ -44,16 +47,19 @@ const PaymentForm = ({clientSecret}) => {
             return;
         }
 
+        // ok on submit need to take care of finishing up the order in the backend
+        //      set active to false and create a new order maybe
+
         setIsLoading(true);
 
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
                 // Make sure to change this to your payment completion page
-                return_url: "http://localhost:3000",
+                return_url: `http://localhost:3000/checkout/success/${orderId}`,
             },
         });
-
+        
         // This point will only be reached if there is an immediate error when
         // confirming the payment. Otherwise, your customer will be redirected to
         // your `return_url`. For some payment methods like iDEAL, your customer will

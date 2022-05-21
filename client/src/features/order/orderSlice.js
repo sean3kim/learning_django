@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { getActiveOrder, addItem, editItem, removeItem, addAddress } from './orderThunks'
+import { getActiveOrder, addItem, editItem, removeItem, addAddress, orderSuccess } from './orderThunks'
 import { loginUser, getLoginStatus } from '../user/userThunks';
 
 const initialState = {
@@ -114,6 +114,11 @@ export const orderSlice = createSlice({
                         state.order = rest;
                     }
                 }
+                return state;
+            })
+        builder
+            .addCase(orderSuccess.fulfilled, (state, action) => {
+                state = initialState;
                 return state;
             })
     }

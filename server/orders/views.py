@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.views import View
+from rest_framework import views
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -13,22 +14,32 @@ from .permissions import IsOwner
 from .models import Order, OrderItem, ShippingAddress
 from .serializers import OrderSerializer, OrderItemSerializer, ShippingAddressSerializer
 
-from products.models import Product
-from .models import OrderItem
+from .models import OrderItem, Order
 
 # Create your views here.
 
 '''
 order views
 '''
+class OrderSuccessView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # set the current active order's active field to false
+        # create a new order and return that one
+        #   actually don't need to create a new order here because when getactiveorder is queried it will create one
+        current_order = Order.objects.get(id=request.data['id'])
+        current_order.active = False
+        current_order.save()
+
+        return JsonResponse({'message': 'success'})
+
+
 class OrderListCreateView(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
     
-    def get_queryset(self):
-        print(self.request)
-        return super().get_queryset()
 
 # ok want to return active order, but the format is for 
 class OrderDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
@@ -116,7 +127,6 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class StripeIntentView(View):
     def post(self, request, *args, **kwargs):
-        print('in stripeintentview post')
         try:
             # request.body is a bytestring and need json.loads to turn it into an actual dictionary
             data = json.loads(request.body)
@@ -129,9 +139,6 @@ class StripeIntentView(View):
             intent = stripe.PaymentIntent.create(
                 amount=int(total),
                 currency='usd',
-                # automatic_payment_methods={
-                #     'enabled': True,
-                # },
             )
             return JsonResponse({
                 'clientSecret': intent['client_secret']

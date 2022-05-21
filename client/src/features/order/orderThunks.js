@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setAxiosConfig } from '../../utils';
 import { axiosAuth } from '../../axios';
+import axios from 'axios';
 
 const url = 'http://localhost:8000/api'
 
@@ -69,5 +70,15 @@ export const addAddress = createAsyncThunk(
             console.log('caught error in thunk', error.response.data)
             return thunkAPI.rejectWithValue(error.response.data);
         }
+    }
+)
+
+export const orderSuccess = createAsyncThunk(
+    'order/orderSuccess',
+    async (id) => {
+        const config = setAxiosConfig();
+        const res = await axios.post(`${url}/orders/success/`, {id}, config);
+        console.log('response data in thunk', res.data);
+        return res.data;
     }
 )

@@ -27,12 +27,11 @@ const CheckoutPage = () => {
     }, [dispatch])
 
     const getPaymentIntent = async () => {
-        // have the order and inside the order have the orderItems and within the orderItems have the product ids
-        //      can i just send the orderitem ids instead of product ids and fetch the products from there?
+        // sending order ids and getting the products related in server
         const config = setAxiosConfig();
         const data = orderItems.map((item) => item.id);
         const res = await axios.post(`${url}/orders/create-payment-intent/`, {items: data}, config);
-        setClientSecret(res.data.clientSecret)
+        setClientSecret(res.data.clientSecret);
     }
 
     const appearance = {
