@@ -1,8 +1,6 @@
 import { React, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { setAxiosConfig } from '../utils';
-import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 import { orderSuccess } from '../features/order/orderThunks';
 
 
@@ -10,21 +8,13 @@ import { orderSuccess } from '../features/order/orderThunks';
 const CheckoutSuccessPage = () => {
 
     const params = useParams();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const url = 'http://localhost:8000/api'
     useEffect(() => {
-        // set the successful order's active field to false
-        // create a new order
         dispatch(orderSuccess(params.id));
-        // test();
-    }, [])
-
-    // const test = async () => {
-    //     const config = setAxiosConfig();
-    //     const res = await axios.post(`${url}/orders/success/`, {id: params.id}, config);
-    //     console.log('response data', res.data);
-    // }
+        navigate('/products');
+    }, [dispatch, params.id, navigate])
 
     return (
         <div>checkout success {params.id}</div>

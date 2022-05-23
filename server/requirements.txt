@@ -1,0 +1,7 @@
+Django==4.0.4
+django_environ==0.8.1
+djangorestframework==3.13.1
+djangorestframework_simplejwt==5.1.0
+environ==1.0
+setuptools==61.1.1
+stripe==3.0.0
