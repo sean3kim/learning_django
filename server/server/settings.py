@@ -156,10 +156,12 @@ STATIC_ROOT = 'static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://master.d7vy19j6bujk4.amplifyapp.com',
 ]
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://master.d7vy19j6bujk4.amplifyapp.com',
 ]
 CORS_ALLOW_CREDENTIALS = True
 
