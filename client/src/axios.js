@@ -1,17 +1,17 @@
 import axios from 'axios';
-import { setAxiosConfig } from './utils';
+import { api_url } from './proddev';
 
 export const ax = axios.create({
-    baseURL: 'http://localhost:8000/api/',
+    baseURL: api_url,
 })
 
 export const axiosAuth = axios.create({
-    baseURL: 'http://localhost:8000/api/',
+    baseURL: api_url,
 })
 
 axiosAuth.interceptors.request.use(
     async (config) => {
-        await axios.post('token/refresh/', {}, config);
+        await axios.post('/token/refresh/', {}, config);
         return config;
     }, (error) => {
         return Promise.reject(error);

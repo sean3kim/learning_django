@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useElements, useStripe, PaymentElement } from '@stripe/react-stripe-js';
+import { DEV } from '../proddev';
 
 const PaymentForm = ({clientSecret}) => {
     const stripe = useStripe();
@@ -10,6 +11,8 @@ const PaymentForm = ({clientSecret}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const orderId = useSelector((state) => state.order.order.id);
+
+    let url = DEV ? 'http://localhost:3000' : 'https://master.d7vy19j6bujk4.amplifyapp.com';
 
     useEffect(() => {
         if (!stripe) {
@@ -56,7 +59,7 @@ const PaymentForm = ({clientSecret}) => {
             elements,
             confirmParams: {
                 // Make sure to change this to your payment completion page
-                return_url: `http://localhost:3000/checkout/success/${orderId}`,
+                return_url: `${url}/checkout/success/${orderId}`,
             },
         });
         

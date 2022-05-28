@@ -2,14 +2,15 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setAxiosConfig } from '../../utils';
 import { axiosAuth } from '../../axios';
 import axios from 'axios';
+import { api_url } from '../../proddev';
 
-const url = 'http://localhost:8000/api'
+// const url = 'http://localhost:8000/api'
 
 export const getActiveOrder = createAsyncThunk(
     'order/getActiveOrder',
     async () => {
         let config = setAxiosConfig();
-        const res = await axiosAuth.get(`${url}/orders/active/`, config);
+        const res = await axiosAuth.get(`${api_url}/orders/active/`, config);
         return res.data;
     }
 )
@@ -20,7 +21,7 @@ export const addItem = createAsyncThunk(
         const config = setAxiosConfig();
 
         try {
-            const res = await axiosAuth.post(`${url}/orders/item/`, data, config)
+            const res = await axiosAuth.post(`${api_url}/orders/item/`, data, config)
             return res.data;
         } catch (error) {
             return thunkAPI.rejectWithValue(error.response.data);
@@ -34,7 +35,7 @@ export const editItem = createAsyncThunk(
         const config = setAxiosConfig();
 
         try {
-            const res = await axiosAuth.put(`${url}/orders/item/${updateData.id}/`, updateData.data, config);
+            const res = await axiosAuth.put(`${api_url}/orders/item/${updateData.id}/`, updateData.data, config);
             // const res = await axiosAuth.put(`${url}/orders/item/99/`, updateData.data, config);
             return res.data
         } catch (error) {
@@ -53,7 +54,7 @@ export const removeItem = createAsyncThunk(
     'order/removeItem',
     async (id) => {
         const config = setAxiosConfig();
-        await axiosAuth.delete(`${url}/orders/item/${id}/`, config);
+        await axiosAuth.delete(`${api_url}/orders/item/${id}/`, config);
         return id;
     }
 )
@@ -63,7 +64,7 @@ export const addAddress = createAsyncThunk(
     async (add, thunkAPI) => {
         const config = setAxiosConfig();
         try {
-            const res = await axiosAuth.post(`${url}/orders/address/`, add, config);
+            const res = await axiosAuth.post(`${api_url}/orders/address/`, add, config);
             console.log('server response data', res.data)
             return res.data;
         } catch (error) {
@@ -77,7 +78,7 @@ export const orderSuccess = createAsyncThunk(
     'order/orderSuccess',
     async (id) => {
         const config = setAxiosConfig();
-        const res = await axios.post(`${url}/orders/success/`, {id}, config);
+        const res = await axios.post(`${api_url}/orders/success/`, {id}, config);
         console.log('response data in thunk', res.data);
         return res.data;
     }

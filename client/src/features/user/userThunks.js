@@ -4,8 +4,9 @@ import { setAxiosConfig } from '../../utils';
 import Cookie from 'js-cookie';
 import { axiosAuth } from '../../axios';
 import axios from 'axios';
+import { api_url } from '../../proddev';
 
-const url = 'http://localhost:8000/api'
+// const url = 'http://localhost:8000/api'
 
 /*
 this thunk sends a request to server to login a user
@@ -21,14 +22,14 @@ export const loginUser = createAsyncThunk(
         const ax = axios.create();
         ax.interceptors.request.use(
             async (config) => {
-                await axios.post(`${url}/token/`, token_auth, config);
+                await axios.post(`${api_url}/token/`, token_auth, config);
                 return config;
             },
             async (err) => {
                 return Promise.reject(err);
             }
         )
-        const res = await ax.post(`${url}/users/login/`, loginCred, config);
+        const res = await ax.post(`${api_url}/users/login/`, loginCred, config);
         return res.data;
     }
 )
@@ -50,7 +51,7 @@ export const registerUser = createAsyncThunk(
         const ax = axios.create()
         ax.interceptors.response.use(
             async (res) => {
-                await axios.post(`${url}/token/`, token_auth, config);
+                await axios.post(`${api_url}/token/`, token_auth, config);
                 return res;
             },
             async (err) => {
@@ -58,7 +59,7 @@ export const registerUser = createAsyncThunk(
             }
         )
 
-        const res = await ax.post(`${url}/users/register/`, loginCred, config);
+        const res = await ax.post(`${api_url}/users/register/`, loginCred, config);
         return res.data;
     }
 )
@@ -79,7 +80,7 @@ export const getLoginStatus = createAsyncThunk(
             async (config) => {
                 // what to do if the refresh fails? then can return some kind of false and don't need to go to final status endpoint
                 try {
-                    await axios.post(`${url}/token/refresh/`, {}, {withCredentials: true}).catch((err) => console.log("failed refresh", err.response))
+                    await axios.post(`${api_url}/token/refresh/`, {}, {withCredentials: true}).catch((err) => console.log("failed refresh", err.response))
                     return config;
                 } catch (error) {
                     return Promise.reject(error);
@@ -89,7 +90,7 @@ export const getLoginStatus = createAsyncThunk(
             })
 
         try {
-            const res = await ax.get(`${url}/users/status/`, {withCredentials: true})
+            const res = await ax.get(`${api_url}/users/status/`, {withCredentials: true})
             return res.data
         } catch (error) {
             // rejectWithValue will send to rejected extrareducer in slice with the value defined in rejectValue
@@ -111,7 +112,7 @@ export const logoutUser = createAsyncThunk(
     'users/logoutUser',
     async () => {
         const csrftoken = Cookie.get('csrftoken')
-        await axios.post(`${url}/users/logout/`, {}, {withCredentials: true, headers: {'X-CSRFToken': csrftoken}})
+        await axios.post(`${api_url}/users/logout/`, {}, {withCredentials: true, headers: {'X-CSRFToken': csrftoken}})
         return 'logged out'
     }
 )

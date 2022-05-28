@@ -2,6 +2,7 @@ import { React, useState } from 'react';
 import { TextField, Button } from '@mui/material';
 
 import axios from 'axios';
+import { api_url } from '../proddev';
 import { setAxiosConfig } from '../utils';
 
 const AddReviewForm = ({user, productId}) => {
@@ -9,7 +10,7 @@ const AddReviewForm = ({user, productId}) => {
     const [reviewBody, setReviewBody] = useState('');
     const [rating, setRating] = useState(0);
 
-    const url = 'http://localhost:8000/api'
+    // const url = 'http://localhost:8000/api'
     const handleSubmit = async (e) => {
         e.preventDefault();
         const config = setAxiosConfig();
@@ -20,7 +21,7 @@ const AddReviewForm = ({user, productId}) => {
             user,
             product: productId
         }
-        const res = await axios.post(`${url}/reviews/`, data, config);
+        const res = await axios.post(`${api_url}/reviews/`, data, config);
         console.log('submitted review data', res.data)
     }
 
