@@ -34,7 +34,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
             del response.data['refresh']
         if response.data.get('access'):
             access_cookie_max_age = 60*5 # 5 min
-            response.set_cookie('access_token', response.data['access'], max_age=access_cookie_max_age, httponly=True)
+            response.set_cookie('access_token', response.data['access'], max_age=access_cookie_max_age, httponly=True, samesite='None', secure=True, domain='contactpdx.com')
             del response.data['access']
         csrf.get_token(request)
         return super().finalize_response(request, response, *args, **kwargs)
