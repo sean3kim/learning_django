@@ -158,10 +158,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'https://master.d7vy19j6bujk4.amplifyapp.com',
+    'https://www.contactpdx.com',
 ]
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'https://master.d7vy19j6bujk4.amplifyapp.com',
+    'https://www.contactpdx.com',
 ]
 CORS_ALLOW_CREDENTIALS = True
 
