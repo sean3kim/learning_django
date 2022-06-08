@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 import environ
 import os
+import cloudinary
 
 env = environ.Env()
 environ.Env.read_env()
@@ -30,10 +31,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-dm7%8gd3k1v_y#(we8=+%dya!mf9)s#+4=g#er7akd6898h8+j'
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 
+cloudinary.config(
+    cloud_name = env('CLOUDINARY_CLOUD_NAME'),
+    api_key = env('CLOUDINARY_API_KEY'),
+    api_secret = env('CLOUDINARY_API_SECRET'),
+)
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['django-env.eba-vkh9pvrg.us-west-2.elasticbeanstalk.com', 'app.contactpdx.com']
+ALLOWED_HOSTS = ['django-env.eba-vkh9pvrg.us-west-2.elasticbeanstalk.com', 'app.contactpdx.com', 'localhost']
 
 
 # Application definition
@@ -155,9 +162,9 @@ STATIC_ROOT = 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_COOKIE_DOMAIN = 'contactpdx.com'
-CSRF_COOKIE_SAMESITE = None
-CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_DOMAIN = 'contactpdx.com'
+# CSRF_COOKIE_SAMESITE = None
+# CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'https://master.d7vy19j6bujk4.amplifyapp.com',

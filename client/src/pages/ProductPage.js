@@ -55,6 +55,7 @@ const ProductPage = () => {
     return (
         <Container>
             <Paper sx={{paddingBottom: '1rem'}}>
+            {console.log('products', product)}
             {errorMessage && <Alert severity='error' variant='outlined'>{errorMessage}</Alert>}
             {(success && !errorMessage) && <Alert severity='success' variant='outlined'>successfully added item to cart</Alert>}
                 <Grid container >

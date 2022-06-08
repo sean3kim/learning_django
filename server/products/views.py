@@ -7,6 +7,8 @@ from .models import Apparel, Climbing, Tag, Product
 from .serializers import ApparelSerializer, ClimbingSerializer, ImageSerializer, TagSerializer, ProductSerializer
 from .permissions import IsAdminOrReadOnly
 
+import cloudinary.uploader
+
 # Create your views here.
 
 '''
@@ -54,12 +56,15 @@ class ApparelListCreateView(generics.ListCreateAPIView):
         image_array_data = []
         for key,value in request.data.items():
             if key.startswith('image'):
+                print(f'image {key} -- {value}')
                 image_array_data.append({
                     'name': prod.name,
                     'product': prod.id,
                     'image': value,
                     'default': True
                 })
+                # uploaded_image = cloudinary.uploader.upload(value)
+                # print('data from cloudinary upload', uploaded_image)
         # if no images were provided need to still provide data but with the image field missing
         #   if the image field is present, default is not set
         if len(image_array_data) == 0:
@@ -69,6 +74,7 @@ class ApparelListCreateView(generics.ListCreateAPIView):
                 'default': True
             })
 
+        print('image array data', image_array_data)
         imageSerializer = ImageSerializer(data=image_array_data, many=True)
         imageSerializer.is_valid(raise_exception=True)
         self.perform_create(imageSerializer)

@@ -28,7 +28,7 @@ const ListProducts = () => {
                                 <CardMedia 
                                     component='img'
                                     height='150'
-                                    // image={p.images[0].image}
+                                    image={p.images[0].image}
                                 />
                                 <div>
                                     <Typography sx={{fontSize: '20px', float: 'left'}}>{p.name}</Typography>
